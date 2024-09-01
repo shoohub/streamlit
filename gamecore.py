@@ -33,34 +33,30 @@ if st.session_state.step == 2:
         if st.button("マトリックスを生成"):
             st.session_state.step = 3
 
-# ステップ3: スコアの入力
+# ステップ3: スコアの簡易入力
 if st.session_state.step == 3:
     st.title("ステップ3: スコアの入力")
-    
+
     players = st.session_state.players
     num_rounds = st.session_state.num_rounds
     
-    scores = np.zeros((len(players), num_rounds), dtype=int)
-    st.session_state.scores = scores
+    if st.session_state.scores is None:
+        st.session_state.scores = pd.DataFrame(np.zeros((len(players), num_rounds), dtype=int), 
+                                               index=players, 
+                                               columns=[f"ラウンド{j+1}" for j in range(num_rounds)])
     
-    for i, player in enumerate(players):
-        for j in range(num_rounds):
-            scores[i, j] = st.number_input(f"{player}のラウンド{j+1}のスコア:", min_value=0, value=0, step=1, key=f"score_{i}_{j}")
-    
-    # スコアをDataFrameに変換して表示
-    df_scores = pd.DataFrame(st.session_state.scores, index=players, columns=[f"ラウンド{j+1}" for j in range(num_rounds)])
     st.write("スコアマトリックス:")
-    st.dataframe(df_scores)
-    
+    edited_scores = st.experimental_data_editor(st.session_state.scores, num_rows="dynamic")
+
     if st.button("採点"):
+        st.session_state.scores = edited_scores
         st.session_state.step = 4
 
 # ステップ4: 採点結果の表示
 if st.session_state.step == 4:
     st.title("ステップ4: 採点結果")
     
-    players = st.session_state.players
-    df_scores = pd.DataFrame(st.session_state.scores, index=players, columns=[f"ラウンド{j+1}" for j in range(st.session_state.num_rounds)])
+    df_scores = st.session_state.scores
     
     # 合計点を計算して表示
     total_scores = df_scores.sum(axis=1)
