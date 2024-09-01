@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ヘッダー
-st.title("シンプルな計算機")
+st.title("SHOOの計算機")
 
 # 数値の入力
 num1 = st.number_input("最初の数値を入力してください", value=0)
