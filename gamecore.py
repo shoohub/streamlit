@@ -1,41 +1,41 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 
 # ヘッダー
-st.title("ゲームスコア管理")
+st.title("ゲームスコア管理システム")
 
-# ユーザー人数の入力
+# ユーザー人数、名前、ゲーム回数の入力
 num_players = st.number_input("プレイヤーの人数を入力してください", min_value=1, value=1, step=1)
+num_rounds = st.number_input("ゲームの回数を入力してください", min_value=1, value=1, step=1)
 
-# プレイヤー名の入力を一括で行う
-if 'players' not in st.session_state:
-    st.session_state.players = []
+# プレイヤー名の入力
+player_names = []
+for i in range(num_players):
+    player_name = st.text_input(f"プレイヤー{i+1}の名前を入力してください", key=f"player_{i}_name")
+    player_names.append(player_name)
 
-if len(st.session_state.players) != num_players:
-    st.session_state.players = [''] * num_players
+# プレイヤー名がすべて入力されたか確認
+if all(player_names) and num_rounds > 0:
+    # スコア用のマトリックスを作成
+    scores = np.zeros((num_players, num_rounds), dtype=int)
 
-if st.button("プレイヤー名を登録"):
+    st.write("各ラウンドのスコアを入力してください:")
+
+    # スコア入力
     for i in range(num_players):
-        player_name = st.text_input(f"プレイヤー{i+1}の名前を入力してください", key=f"player_{i}_name")
-        st.session_state.players[i] = player_name
+        for j in range(num_rounds):
+            scores[i, j] = st.number_input(f"{player_names[i]}さんのラウンド{j+1}のスコア:", min_value=0, value=0, step=1, key=f"score_{i}_{j}")
 
-# スコア管理用のセッションステートの初期化
-if 'scores' not in st.session_state:
-    st.session_state.scores = {player: 0 for player in st.session_state.players}
+    # スコアをDataFrameに変換して表示
+    df_scores = pd.DataFrame(scores, index=player_names, columns=[f"ラウンド{j+1}" for j in range(num_rounds)])
+    st.write("スコアマトリックス:")
+    st.dataframe(df_scores)
 
-# プレイヤー名が入力されている場合、得点を入力
-if all(st.session_state.players):  # すべてのプレイヤー名が入力されているかを確認
-    for player in st.session_state.players:
-        score = st.number_input(f"{player}さんの今回の得点を入力してください", min_value=0, value=0, step=1, key=f"{player}_score")
-        if st.button(f"{player}さんの得点を追加", key=f"{player}_button"):
-            st.session_state.scores[player] += score
-
-    # 合計得点の表示
+    # 合計点を計算
+    total_scores = df_scores.sum(axis=1)
     st.write("各プレイヤーの合計得点:")
-    for player, total_score in st.session_state.scores.items():
-        st.write(f"{player}: {total_score} 点")
-
-    # スコアをリセットするボタン
-    if st.button("スコアをリセット"):
-        st.session_state.scores = {player: 0 for player in st.session_state.players}
+    for player, total in total_scores.items():
+        st.write(f"{player}: {total} 点")
 else:
-    st.write("すべてのプレイヤー名を入力してください。")
+    st.write("すべてのプレイヤー名とゲーム回数を入力してください。")
