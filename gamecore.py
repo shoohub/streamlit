@@ -13,7 +13,7 @@ if 'step' not in st.session_state:
     st.session_state.scores = None
 
 if st.session_state.step == 1:
-    st.header("ステップ1: ユーザー人数と名前の入力")
+    st.header("ユーザー人数と名前の入力")
     
     num_players = st.number_input("プレイヤーの人数を入力してください", min_value=1, value=1, step=1)
     
@@ -28,7 +28,7 @@ if st.session_state.step == 1:
 
 # ステップ2: ゲーム回数の入力
 if st.session_state.step == 2:
-    st.header("ステップ2: ゲーム回数の入力")
+    st.header("ゲーム回数の入力")
     
     num_rounds = st.number_input("ゲームの回数を入力してください", min_value=1, value=1, step=1)
     st.session_state.num_rounds = num_rounds
@@ -39,7 +39,7 @@ if st.session_state.step == 2:
 
 # ステップ3: スコアの簡易入力
 if st.session_state.step == 3:
-    st.header("ステップ3: スコアの入力")
+    st.header("スコアの入力")
 
     players = st.session_state.players
     num_rounds = st.session_state.num_rounds
@@ -59,7 +59,7 @@ if st.session_state.step == 3:
 
 # ステップ4: 採点結果の表示
 if st.session_state.step == 4:
-    st.header("ステップ4: 採点結果")
+    st.header("採点結果")
     
     df_scores = st.session_state.scores
     
