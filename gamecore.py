@@ -6,6 +6,7 @@ import numpy as np
 if 'step' not in st.session_state:
     st.session_state.step = 1
     st.session_state.players = []
+    st.session_state.num_rounds = 0
     st.session_state.scores = None
 
 if st.session_state.step == 1:
@@ -45,8 +46,8 @@ if st.session_state.step == 3:
                                                index=players, 
                                                columns=[f"ラウンド{j+1}" for j in range(num_rounds)])
     
-    st.write("スコアマトリックス:")
-    edited_scores = st.experimental_data_editor(st.session_state.scores, num_rows="dynamic")
+    # スコア入力用のテーブルを表示
+    edited_scores = st.data_editor(st.session_state.scores, use_container_width=True)
 
     if st.button("採点"):
         st.session_state.scores = edited_scores
