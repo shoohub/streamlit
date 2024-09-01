@@ -50,6 +50,7 @@ if st.session_state.step == 3:
     edited_scores = st.data_editor(st.session_state.scores, use_container_width=True)
 
     if st.button("採点"):
+        # スコアを更新
         st.session_state.scores = edited_scores
         st.session_state.step = 4
 
@@ -66,4 +67,8 @@ if st.session_state.step == 4:
         st.write(f"{player}: {total} 点")
     
     if st.button("再スタート"):
+        # セッションステートをリセット
         st.session_state.step = 1
+        st.session_state.players = []
+        st.session_state.num_rounds = 0
+        st.session_state.scores = None
