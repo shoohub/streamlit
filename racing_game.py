@@ -1,50 +1,50 @@
-"""６匹の海亀がレースをする！色を入力して遊びましょう！"""
 import random
-from turtle import Screen, Turtle
+import time
 
-is_race_on = False
-screen = Screen()
-screen.setup(width=500, height=400)
+import streamlit as st
 
-user_bet = screen.textinput(
-    title="Make your bet", prompt="Witch turtle will win the race?Enter a color(enter red,green,light pink,green yellow,medium purple,light sky blue): ")
+# タイトルと説明
+st.title('海亀レース！')
+st.write('どの色の海亀が勝つか予想して、レースの結果を見てみましょう！')
+
+# ユーザーに色を入力させる
+user_bet = st.text_input("どの海亀が勝つか予想して色を入力してください (red, green, blue, yellow, purple, orange):")
 
 # 海亀の色を定義する
-colors = ["red", "green", "light pink",
-          "green yellow", "medium purple", "light sky blue"]
-# 海亀のスタートラインを定義する
-y_positions = [-70, -40, -10, 20, 50, 80]
-# 6匹の海亀を生成する
-all_turtles = []
-for turtle_index in range(0, 6):
-    new_turtle = Turtle(shape="turtle")
-    new_turtle.color(colors[turtle_index])
-    new_turtle.penup()
-    new_turtle.goto(x=-230, y=y_positions[turtle_index])
-    new_turtle.pendown()
-    all_turtles.append(new_turtle)
+colors = ["red", "green", "blue", "yellow", "purple", "orange"]
+# 海亀の進行状況を保存するリスト
+turtle_progress = {color: 0 for color in colors}
 
-# ユーザー入力させてからレースをONにする
-if user_bet:
-    is_race_on = True
+# レースが始まるボタン
+if st.button("レース開始！"):
+    if user_bet not in colors:
+        st.error("無効な色が選ばれました。正しい色を選んでください。")
+    else:
+        st.write(f"あなたの選んだ海亀の色: {user_bet}")
 
+        # 各海亀のプログレスバーを作成
+        progress_bars = {color: st.progress(0) for color in colors}
 
-while is_race_on:  # 全体のループ処理
-    for turtle in all_turtles:  # 海亀リストの順番にサークルを回していく
-        if turtle.xcor() > 230:  # ゴールに到着（画面に一番右側まで）したら、結果を出力し終了する
-            winning_color = turtle.pencolor()
-            if winning_color == user_bet:
+        # レースが終了するまで進行
+        race_ongoing = True
+        while race_ongoing:
+            for turtle in colors:
+                # 各海亀がランダムな距離を進む
+                turtle_progress[turtle] += random.randint(1, 10)
+                if turtle_progress[turtle] >= 100:
+                    turtle_progress[turtle] = 100  # 最大100に制限
+                    race_ongoing = False
+                    winning_color = turtle
+                    break
 
-                print(f"you have won!The {
-                      winning_color} turtle is the winner!")
-            else:
-                print(f"you have lost!The {
-                      winning_color} turtle is the winner!")
-            is_race_on = False
+                # プログレスバーを更新
+                progress_bars[turtle].progress(turtle_progress[turtle])
+
+            # レースの進行を見やすくするためのスリープ
+            time.sleep(0.1)
+
+        # 勝者の発表
+        if winning_color == user_bet:
+            st.success(f"おめでとうございます！{winning_color}の海亀が勝ちました！")
         else:
-            rand_distance = random.randint(0, 10)
-            turtle.forward(rand_distance)
-
-
-# 画面をクリックするまで閉じない
-screen.exitonclick()
+            st.warning(f"残念！{winning_color}の海亀が勝ちました！")
