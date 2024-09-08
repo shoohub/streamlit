@@ -8,7 +8,7 @@ st.title('亀のレース！')
 st.write('どの色の亀が勝つか予想して、レースの結果を見てみましょう！')
 
 # 亀の色を定義（画像ファイル名と対応）
-colors = ["red", "green", "blue", "yellow", "purple", "orange"]
+colors = ["red", "green"]
 turtle_images = {
     "red": "red.png",
     "green": "green.png",
